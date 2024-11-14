@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "mi",
+            "name": "MI: Run and Debug",
+            "request": "launch",
+            "internalConsoleOptions": "openOnSessionStart",
+            "env": {
+                "jmsuser" : "admin",
+                "jmspass" :"PDBJbCcd2MiMFab8/yZjF5qac00iw3WEYwDgO+awVn6IKADErDNlGz4puHr93lzx30s11iNIBBDX0nAfm/wNRLivezXzqBpw3x6mGxaFEVCmKrQk7M/yFXV8sI+8+derSxTGwJbVMBm31phVv5dnsrzDEh3Q/X4P1LCxlQNPzcPnX2A+I4a3KRRHCQG4xt6bTaRIiagtm1VwhfNCfjWBDrVJgRdcpXvJXtc/zjn1KnOmbe4e/k1hIZHf4srE1iT0EXDjGyqtmO1KjhJJBo8/wXClW2taemzJel2/seuh+K4937vg05hPp3jJyDVVGaoF6uLPKYjsw02P16M6fNmTSg==",
+                "jmsurl" :"tcp://IS-APPS-1035:61616"
+            }
+        }
+    ]
+}

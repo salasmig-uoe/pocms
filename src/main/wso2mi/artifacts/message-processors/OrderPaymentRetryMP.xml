@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messageProcessor class="org.apache.synapse.message.processor.impl.forwarder.ScheduledMessageForwardingProcessor" name="OrderPaymentRetryMP" messageStore="OrderPaymentRetryMQ" targetEndpoint="OrderPaymentRetryProxyEP" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="message.processor.reply.sequence">OrderPaymentRetrySeq</parameter>
+    <parameter name="max.delivery.drop">Disabled</parameter>
+    <parameter name="is.active">true</parameter>
+</messageProcessor>

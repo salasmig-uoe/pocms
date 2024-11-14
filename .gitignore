@@ -1,0 +1,9 @@
+/.metadata/
+/.tmp/
+target/
+.meta/
+.settings/
+synapse-config/local-entries/
+*.versionsBackup
+*.project
+*/bin
