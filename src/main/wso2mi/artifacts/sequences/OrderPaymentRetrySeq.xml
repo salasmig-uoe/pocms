@@ -7,10 +7,13 @@
         <source clone="true" type="envelope"/>
         <target property="SOAP_RECEIPT_COPY" type="property"/>
     </enrich>
-    <log>
-        <property expression="$ctx:SOAP_RECEIPT_COPY" name="OrderPaymentRetrySeq SOAP Receipt"/>
-    </log>
+    <log level="full"/>
+    <property name="ContentType" expression="$trp:Content-Type"/>
     <log level="custom">
+        <property name="Content-Type Header" expression="get-property('ContentType')"/>
+    </log>
+	<log level="custom">
+        <property expression="$ctx:SOAP_RECEIPT_COPY" name="CARDEXCHANGE-MESSAGE-TO-PROCESS Received from ...EnqueueCardAPI_Sequence"/>
         <property name="At end of OrderPaymentRetrySeq" value="true"/>
     </log>
 </sequence>
