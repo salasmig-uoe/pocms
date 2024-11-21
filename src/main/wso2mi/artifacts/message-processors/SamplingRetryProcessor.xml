@@ -2,6 +2,6 @@
 <messageProcessor class="org.apache.synapse.message.processor.impl.sampler.SamplingProcessor" name="SamplingRetryProcessor" messageStore="OrderPaymentRetryMQ" xmlns="http://ws.apache.org/ns/synapse">
     <parameter name="sequence">SamplingRetry</parameter>
     <parameter name="interval">1000</parameter>
-    <parameter name="is.active">true</parameter>
+    <parameter name="is.active">false</parameter>
     <parameter name="concurrency">1</parameter>
 </messageProcessor>

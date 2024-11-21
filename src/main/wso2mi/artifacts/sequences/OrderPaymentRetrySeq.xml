@@ -13,7 +13,7 @@
         <property name="Content-Type Header" expression="get-property('ContentType')"/>
     </log>
 	<log level="custom">
-        <property expression="$ctx:SOAP_RECEIPT_COPY" name="CARDEXCHANGE-MESSAGE-TO-PROCESS Received from ...EnqueueCardAPI_Sequence"/>
+        <property expression="$ctx:SOAP_RECEIPT_COPY" name="CARDEXCHANGE-MESSAGE-IN-RETRY-SEQ Received from ...EnqueueCardAPI_Sequence"/>
         <property name="At end of OrderPaymentRetrySeq" value="true"/>
     </log>
 </sequence>

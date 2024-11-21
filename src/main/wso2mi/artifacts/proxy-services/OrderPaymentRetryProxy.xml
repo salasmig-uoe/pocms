@@ -11,16 +11,33 @@
                 <target property="SOAP_RECEIPT_COPY" type="property"/>
             </enrich>
             <log level="custom">
-                <property expression="$ctx:SOAP_RECEIPT_COPY" name="incoming payment converted to SOAP"/>
+                <property expression="$ctx:SOAP_RECEIPT_COPY" name="INCOMING-PAYMENT-PROXY payment converted to SOAP"/>
             </log>
-            <!--
+            
             <call>
                 <endpoint>
                     <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
                 </endpoint>
             </call>
+            <!-- Log the response of the endpoint call -->
+            <log level="custom">
+                <property expression="$axis2:HTTP_SC" name="HTTP Status Code"/>
+                <property expression="$ctx:RESPONSE" name="Response Message"/>
+            </log>
             <filter regex="200" source="$axis2:HTTP_SC">
-                <then/>
+                <then>
+                    <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
+                    <payloadFactory media-type="json">
+                        <format>{
+                            "message": "Orders processed",
+                            "status":"$1 success"}
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="$ctx:HTTP_SC"/>
+                        </args>
+                    </payloadFactory>
+                    <respond/>
+                </then>
                 <else>
                     <log level="custom">
                         <property expression="fn:concat($axis2:HTTP_SC,' status code response via mocked API')" name="LOG-POCMS-ERROR"/>
@@ -30,9 +47,6 @@
                     <respond/>
                 </else>
             </filter>
-            -->
-            <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
-            <respond/>
         </inSequence>
         <outSequence>
             <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
