@@ -6,6 +6,31 @@
             <log level="custom">
                 <property name="OrderPaymentRetrySeq completed" value="true"/>
             </log>
+            <enrich>
+                <source clone="true" type="envelope"/>
+                <target property="SOAP_RECEIPT_COPY" type="property"/>
+            </enrich>
+            <log level="custom">
+                <property expression="$ctx:SOAP_RECEIPT_COPY" name="incoming payment converted to SOAP"/>
+            </log>
+            <!--
+            <call>
+                <endpoint>
+                    <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
+                </endpoint>
+            </call>
+            <filter regex="200" source="$axis2:HTTP_SC">
+                <then/>
+                <else>
+                    <log level="custom">
+                        <property expression="fn:concat($axis2:HTTP_SC,' status code response via mocked API')" name="LOG-POCMS-ERROR"/>
+                    </log>
+                    <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
+                    <store messageStore="OrderPaymentErrorMQ" />
+                    <respond/>
+                </else>
+            </filter>
+            -->
             <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
             <respond/>
         </inSequence>
@@ -20,6 +45,7 @@
                 <property expression="$ctx:ERROR_CODE" name="Error Code"/>
                 <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
             </log>
+            <store messageStore="OrderPaymentErrorMQ" />
             <respond/>
         </faultSequence>
     </target>
