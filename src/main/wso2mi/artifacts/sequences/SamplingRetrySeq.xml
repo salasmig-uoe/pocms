@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence name="SamplingRetrySeq" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="custom">
+        <property name="USING-SAMPLING-PROCESSOR" value="Calling retry seq from SamplingRetrySeq" />
+    </log>
     <sequence key="OrderPaymentRetrySeq"/>
 </sequence>
