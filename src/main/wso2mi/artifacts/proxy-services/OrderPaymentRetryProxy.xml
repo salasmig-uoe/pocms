@@ -29,7 +29,7 @@
                     <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
                     <payloadFactory media-type="json">
                         <format>{
-                            "message": "Orders processed",
+                            "message": "Order processed",
                             "status":"$1 success"}
                         </format>
                         <args>
@@ -38,29 +38,23 @@
                     </payloadFactory>
                     <respond/>
                 </then>
-                <else>
+                <else>                    
                     <log level="custom">
                         <property expression="fn:concat($axis2:HTTP_SC,' status code response via mocked API')" name="LOG-POCMS-ERROR"/>
                     </log>
-                    <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
+                    <property expression="get-property('ERROR_CODE')" name="ERROR_CODE" scope="default" type="STRING"/>
+                    <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE" scope="default" type="STRING"/>
+                    <log level="custom">
+                        <property expression="$ctx:ERROR_CODE" name="Error Code"/>
+                        <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
+                    </log>
                     <store messageStore="OrderPaymentErrorMQ" />
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>                            
                     <respond/>
                 </else>
             </filter>
         </inSequence>
-        <outSequence>
-            <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
-            <respond/>
-        </outSequence>
-        <faultSequence>
-            <property expression="get-property('ERROR_CODE')" name="ERROR_CODE" scope="default" type="STRING"/>
-            <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE" scope="default" type="STRING"/>
-            <log level="custom">
-                <property expression="$ctx:ERROR_CODE" name="Error Code"/>
-                <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
-            </log>
-            <store messageStore="OrderPaymentErrorMQ" />
-            <respond/>
-        </faultSequence>
+        <outSequence />
+        <faultSequence />
     </target>
 </proxy>
