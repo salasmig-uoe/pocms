@@ -48,7 +48,13 @@
                         <property expression="$ctx:ERROR_CODE" name="Error Code"/>
                         <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
                     </log>
-                    <store messageStore="OrderPaymentErrorMQ" />
+
+                    <!-- Use the enriched original payload -->
+                    <enrich>
+                        <source type="property" property="SOAP_RECEIPT_COPY"/>
+                        <target type="envelope"/>
+                    </enrich>
+                    <store messageStore="OrderPaymentErrorMQ"/>
                     <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>                            
                     <respond/>
                 </else>
