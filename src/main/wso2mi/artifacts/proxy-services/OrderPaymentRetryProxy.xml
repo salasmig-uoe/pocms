@@ -6,14 +6,8 @@
             <log level="custom">
                 <property name="OrderPaymentRetrySeq completed" value="true"/>
             </log>
-            <enrich>
-                <source clone="true" type="envelope"/>
-                <target property="SOAP_RECEIPT_COPY" type="property"/>
-            </enrich>
-            <log level="custom">
-                <property expression="$ctx:SOAP_RECEIPT_COPY" name="INCOMING-PAYMENT-PROXY payment converted to SOAP"/>
-            </log>
-            
+            <!-- Save the original payload -->
+            <property expression="json-eval($)" name="origPayload" scope="default" type="STRING"/>
             <call>
                 <endpoint>
                     <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
@@ -49,11 +43,13 @@
                         <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
                     </log>
 
-                    <!-- Use the enriched original payload -->
-                    <enrich>
-                        <source type="property" property="SOAP_RECEIPT_COPY"/>
-                        <target type="envelope"/>
-                    </enrich>
+                    <!-- Use the original payload -->
+                    <payloadFactory media-type="json">
+                        <format>$1</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('origPayload')"/>
+                        </args>
+                    </payloadFactory>
                     <store messageStore="OrderPaymentErrorMQ"/>
                     <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>                            
                     <respond/>
