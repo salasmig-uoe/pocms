@@ -6,21 +6,57 @@
             <log level="custom">
                 <property name="OrderPaymentRetrySeq completed" value="true"/>
             </log>
-            <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
-            <respond/>
-        </inSequence>
-        <outSequence>
-            <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>
-            <respond/>
-        </outSequence>
-        <faultSequence>
-            <property expression="get-property('ERROR_CODE')" name="ERROR_CODE" scope="default" type="STRING"/>
-            <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE" scope="default" type="STRING"/>
+            <!-- Save the original payload -->
+            <property expression="json-eval($)" name="origPayload" scope="default" type="STRING"/>
+            <call>
+                <endpoint>
+                    <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
+                </endpoint>
+            </call>
+            <!-- Log the response of the endpoint call -->
             <log level="custom">
-                <property expression="$ctx:ERROR_CODE" name="Error Code"/>
-                <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
+                <property expression="$axis2:HTTP_SC" name="HTTP Status Code"/>
+                <property expression="$ctx:RESPONSE" name="Response Message"/>
             </log>
-            <respond/>
-        </faultSequence>
+            <filter regex="200" source="$axis2:HTTP_SC">
+                <then>
+                    <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
+                    <payloadFactory media-type="json">
+                        <format>{
+                            "message": "Order processed",
+                            "status":"$1 success"}
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="$ctx:HTTP_SC"/>
+                        </args>
+                    </payloadFactory>
+                    <respond/>
+                </then>
+                <else>                    
+                    <log level="custom">
+                        <property expression="fn:concat($axis2:HTTP_SC,' status code response via mocked API')" name="LOG-POCMS-ERROR"/>
+                    </log>
+                    <property expression="get-property('ERROR_CODE')" name="ERROR_CODE" scope="default" type="STRING"/>
+                    <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE" scope="default" type="STRING"/>
+                    <log level="custom">
+                        <property expression="$ctx:ERROR_CODE" name="Error Code"/>
+                        <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
+                    </log>
+
+                    <!-- Use the original payload -->
+                    <payloadFactory media-type="json">
+                        <format>$1</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('origPayload')"/>
+                        </args>
+                    </payloadFactory>
+                    <store messageStore="OrderPaymentErrorMQ"/>
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>                            
+                    <respond/>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence />
+        <faultSequence />
     </target>
 </proxy>
