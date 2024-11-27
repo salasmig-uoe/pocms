@@ -2,61 +2,34 @@
 <proxy name="OrderPaymentRetryProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
     <target>
         <inSequence>
-            <sequence key="OrderPaymentRetrySeq"/>
             <log level="custom">
-                <property name="OrderPaymentRetrySeq completed" value="true"/>
+                <property name="MS-RETRY-PROXY At start of OrderPaymentRetrySeq" value="true"/>
             </log>
+            <property action="remove" name="REST_URL_POSTFIX" scope="axis2"/>
+            <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+    
+
             <!-- Save the original payload -->
             <property expression="json-eval($)" name="origPayload" scope="default" type="STRING"/>
             <call>
                 <endpoint>
                     <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
                 </endpoint>
-            </call>
-            <!-- Log the response of the endpoint call -->
-            <log level="custom">
-                <property expression="$axis2:HTTP_SC" name="HTTP Status Code"/>
-                <property expression="$ctx:RESPONSE" name="Response Message"/>
-            </log>
-            <filter regex="200" source="$axis2:HTTP_SC">
-                <then>
-                    <property name="HTTP_SC" expression="get-property('axis2', 'HTTP_SC')" scope="axis2"/>
-                    <payloadFactory media-type="json">
-                        <format>{
-                            "message": "Order processed",
-                            "status":"$1 success"}
-                        </format>
-                        <args>
-                            <arg evaluator="xml" expression="$ctx:HTTP_SC"/>
-                        </args>
-                    </payloadFactory>
-                    <respond/>
-                </then>
-                <else>                    
-                    <log level="custom">
-                        <property expression="fn:concat($axis2:HTTP_SC,' status code response via mocked API')" name="LOG-POCMS-ERROR"/>
-                    </log>
-                    <property expression="get-property('ERROR_CODE')" name="ERROR_CODE" scope="default" type="STRING"/>
-                    <property expression="get-property('ERROR_MESSAGE')" name="ERROR_MESSAGE" scope="default" type="STRING"/>
-                    <log level="custom">
-                        <property expression="$ctx:ERROR_CODE" name="Error Code"/>
-                        <property expression="$ctx:ERROR_MESSAGE" name="Error Message"/>
-                    </log>
+            </call>    
 
-                    <!-- Use the original payload -->
-                    <payloadFactory media-type="json">
-                        <format>$1</format>
-                        <args>
-                            <arg evaluator="xml" expression="get-property('origPayload')"/>
-                        </args>
-                    </payloadFactory>
-                    <store messageStore="OrderPaymentErrorMQ"/>
-                    <property name="HTTP_SC" scope="axis2" type="STRING" value="200"/>                            
-                    <respond/>
-                </else>
-            </filter>
+            <!--
+            <store description="OrderPayment Message Queue" messageStore="OrderPaymentMQ"/>
+            -->
+            <property description="Initiate asynchronous mediation flow" name="OUT_ONLY" scope="default" type="STRING" value="true"/>
+            <property description="Generate 202 response from mediation flow" name="FORCE_SC_ACCEPTED" scope="axis2" type="STRING" value="true"/>
+            <log level="custom">
+                <property name="MS-RETRY-PROXY  At end of OrderPaymentRetrySeq" value="true"/>
+            </log>
+            <respond/>
         </inSequence>
-        <outSequence />
+        <outSequence>
+            <send/>
+        </outSequence>
         <faultSequence />
     </target>
 </proxy>

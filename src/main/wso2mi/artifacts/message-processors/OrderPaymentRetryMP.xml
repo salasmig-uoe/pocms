@@ -2,7 +2,7 @@
 <messageProcessor class="org.apache.synapse.message.processor.impl.forwarder.ScheduledMessageForwardingProcessor" name="OrderPaymentRetryMP" messageStore="OrderPaymentRetryMQ" targetEndpoint="OrderPaymentRetryProxyEP" xmlns="http://ws.apache.org/ns/synapse">
     <parameter name="client.retry.interval">1000</parameter>
     <parameter name="message.processor.reply.sequence">DefaultReplySeq</parameter>
-    <parameter name="is.active">false</parameter>
+    <parameter name="is.active">true</parameter>
     <parameter name="max.delivery.attempts">4</parameter>
     <parameter name="store.connection.retry.interval">1000</parameter>
     <parameter name="max.store.connection.attempts">-1</parameter>
