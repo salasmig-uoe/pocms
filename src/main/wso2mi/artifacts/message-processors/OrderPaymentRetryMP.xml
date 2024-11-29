@@ -9,6 +9,6 @@
     <parameter name="max.delivery.drop">Disabled</parameter>
     <parameter name="interval">1000</parameter>
     <parameter name="message.processor.failMessagesStore">OrderPaymentErrorMQ</parameter>
-    <parameter name="is.active">true</parameter>
+    <parameter name="is.active">false</parameter>
      <parameter name="message.processor.reply.sequence">DefaultReplySeq</parameter>
 </messageProcessor>

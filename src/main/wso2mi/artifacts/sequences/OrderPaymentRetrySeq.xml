@@ -10,15 +10,24 @@
     <!-- Save the original payload -->
     <property expression="json-eval($)" name="origPayload" scope="default" type="STRING"/>
     <call>
-        <endpoint>
-            <http method="post" uri-template="http://localhost:3000/products?storageId=666"/>
-        </endpoint>
+        <endpoint key="MockoonEP"/>
     </call>    
-    
-    
-    <store description="OrderPayment Message Queue" messageStore="OrderPaymentMQ"/>
-    <property description="Initiate asynchronous mediation flow" name="OUT_ONLY" scope="default" type="STRING" value="true"/>
-    <property description="Generate 202 response from mediation flow" name="FORCE_SC_ACCEPTED" scope="axis2" type="STRING" value="true"/>
+    <switch source="get-property('axis2','HTTP_SC')">
+        <case regex="200|201|202">
+            <log level="custom">
+                <property value=" SUCCESSFULLY PROCESSED!!" name="LOG-RETRIED-MESSAGE"/>
+            </log>
+        </case>
+        <default>
+            <log category="ERROR" level="custom">
+                <property expression="$ctx:ERROR_MESSAGE" name="message"/>
+                <property expression="$ctx:ERROR_CODE" name="code"/>
+                <property expression="$ctx:ERROR_DETAIL" name="detail"/>
+                <property expression="$ctx:ERROR_EXCEPTION" name="exception"/>
+            </log>
+            <store description="OrderPayment Error Message Queue" messageStore="OrderPaymentErrorMQ"/>
+        </default>
+    </switch>
     <log level="custom">
         <property name="At end of OrderPaymentRetrySeq" value="true"/>
     </log>
