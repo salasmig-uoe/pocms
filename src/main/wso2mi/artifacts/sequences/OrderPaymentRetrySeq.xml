@@ -17,6 +17,7 @@
             <log level="custom">
                 <property value=" SUCCESSFULLY PROCESSED!!" name="LOG-RETRIED-MESSAGE"/>
             </log>
+            <respond/> <!-- REQUIRED if called from a proxy -->
         </case>
         <default>
             <log category="ERROR" level="custom">
@@ -25,7 +26,22 @@
                 <property expression="$ctx:ERROR_DETAIL" name="detail"/>
                 <property expression="$ctx:ERROR_EXCEPTION" name="exception"/>
             </log>
+            <log level="custom">
+                <property expression="get-property('origPayload')" name="LOG-RETRIED-MESSAGE failed and sent to Error queue" />
+            </log>
+
+            <payloadFactory media-type="json">
+                <format>$1</format>
+                    <args>
+                        <arg evaluator="xml" expression="get-property('origPayload')"/>
+                    </args>
+            </payloadFactory>
+
             <store description="OrderPayment Error Message Queue" messageStore="OrderPaymentErrorMQ"/>
+
+            <property description="Generate 202 response from mediation flow" name="FORCE_SC_ACCEPTED" scope="axis2" type="STRING" value="true"/>
+            <property name="HTTP_SC" scope="axis2" type="STRING" value="202"/>
+            <respond/>  <!-- RESPOND WITH A 202 and accept the message to be sent to an error queue for later retry -->
         </default>
     </switch>
     <log level="custom">
