@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint name="MockoonEP" xmlns="http://ws.apache.org/ns/synapse">
     <http method="post" statistics="enable" trace="enable" uri-template="http://localhost:3000/productsx">
+        <timeout>
+            <duration>60000</duration>
+        </timeout>
         <suspendOnFailure>
+            <errorCodes>-1</errorCodes>
             <initialDuration>0</initialDuration>
             <progressionFactor>1.00</progressionFactor>
             <maximumDuration>0</maximumDuration>
         </suspendOnFailure>
         <markForSuspension>
+            <errorCodes>-1</errorCodes>
             <retriesBeforeSuspension>6</retriesBeforeSuspension>
-            <retryDelay>10000</retryDelay>
+            <retryDelay>1800000</retryDelay>
         </markForSuspension>
     </http>
 </endpoint>
