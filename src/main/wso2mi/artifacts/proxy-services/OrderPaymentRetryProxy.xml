@@ -2,11 +2,13 @@
 <proxy name="OrderPaymentRetryProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
     <target>
         <inSequence>
-            <sequence key="SamplingRetrySeq"/>
+            <!-- The main sequence is called and will deal in scenarios where the endpoint responds with an error code -->
+            <sequence key="OrderPaymentSeq"/>
         </inSequence>
-        <outSequence>
-            <send/>
-        </outSequence>
-        <faultSequence />
+        <outSequence/>
+        <faultSequence>
+            <!-- Tha fault sequence handles situations where there no response at all was received-->
+            <sequence key="faultSeq"/>
+        </faultSequence>
     </target>
 </proxy>

@@ -3,6 +3,7 @@
     <http method="post" statistics="enable" trace="enable" uri-template="http://localhost:3000/productsx">
         <timeout>
             <duration>60000</duration>
+            <responseAction>fault</responseAction>
         </timeout>
         <suspendOnFailure>
             <errorCodes>-1</errorCodes>
@@ -13,7 +14,7 @@
         <markForSuspension>
             <errorCodes>-1</errorCodes>
             <retriesBeforeSuspension>6</retriesBeforeSuspension>
-            <retryDelay>1800000</retryDelay>
+            <retryDelay>1</retryDelay>
         </markForSuspension>
     </http>
 </endpoint>

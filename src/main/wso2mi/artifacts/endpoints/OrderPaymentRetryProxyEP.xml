@@ -13,7 +13,7 @@
         <markForSuspension>
             <errorCodes>-1</errorCodes>
             <retriesBeforeSuspension>6</retriesBeforeSuspension>
-            <retryDelay>1800000</retryDelay>
+            <retryDelay>1</retryDelay>
         </markForSuspension>
     </address>
 </endpoint>

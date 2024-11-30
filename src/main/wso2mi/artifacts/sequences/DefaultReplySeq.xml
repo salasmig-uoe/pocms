@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence name="DefaultReplySeq" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
-    
-    <!-- Save the original payload -->
+     <!-- Save the original payload -->
     <property expression="json-eval($)" name="origPayload" scope="default" type="STRING"/>
     <log level="custom">
         <property name="LOG-REPLY-SEQ" expression="get-property('origPayload')"/>

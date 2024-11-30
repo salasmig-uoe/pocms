@@ -12,6 +12,13 @@
     <call>
         <endpoint key="MockoonEP"/>
     </call>    
+
+
+    
+    <log level="custom">
+        <property name="ERROR-RESPONSE" expression="get-property('axis2','HTTP_SC')" />
+    </log>
+
     <switch source="get-property('axis2','HTTP_SC')">
         <case regex="200|201|202">
             <log level="custom">
